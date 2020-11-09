@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def matrixToPlot(matrix, vectorsCol=['#FF9A13', '#1190FF']):
     """
     Modify the unit circle and basis vector by applying a matrix.
@@ -37,6 +38,7 @@ def matrixToPlot(matrix, vectorsCol=['#FF9A13', '#1190FF']):
     plt.plot(x1, y1, 'g', alpha=0.5)
     plt.plot(x1_neg, y1_neg, 'g', alpha=0.5)
 
+
 def plotVectors(vecs, cols, alpha=1):
     """
     Plot set of vectors.
@@ -69,3 +71,18 @@ def plotVectors(vecs, cols, alpha=1):
                    [x[3]],
                    angles='xy', scale_units='xy', scale=1, color=cols[i],
                    alpha=alpha)
+
+
+# def low_rank_approx(SVD=None, A=None, r=1):
+#     """
+#     Computes an r-rank approximation of a matrix
+#     given the component u, s, and v of it's SVD
+#     Requires: numpy
+#     """
+#     if not SVD:
+#         SVD = np.linalg.svd(A, full_matrices=False)
+#     u, s, v = SVD
+#     Ar = np.zeros((len(u), len(v)))
+#     for i in np.xrange(r):
+#         Ar += s[i] * np.outer(u.T[i], v[i])
+#     return Ar
