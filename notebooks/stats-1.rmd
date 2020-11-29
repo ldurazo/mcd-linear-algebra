@@ -27,6 +27,7 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
     dbinom(3, 3, 0.075)
     # 2)
     dbinom(1:5, 20, 0.075)
+    plot(dbinom(1:5, 20, 0.075))
     pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
     # 3)
     1 - dbinom(0, 10, 0.075)
@@ -43,7 +44,9 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
     # de una forma más simple, lo de arriba puede expresado de la siguiente manera:
     # genera resultados aleatorios para 20 (n) desarrolladores que ejecutan 10 (size) construcciones
     eventCount <- 0
-    for(i in rbinom(20, 10, 0.075)) {
+    rbinom_result <- rbinom(20, 10, 0.075)
+    plot(rbinom_result)
+    for(i in rbinom_result) {
       eventCount <- eventCount + i
     }
     print(eventCount)
