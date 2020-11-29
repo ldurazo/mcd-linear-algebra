@@ -1,0 +1,54 @@
+---
+title: "Probabilidad y estadística con R"
+author: ldurazo
+date: 28/11/20
+output: html_notebook
+---
+
+Esta libreta de R contiene una serie de ejercicios con el fin de practicar lo aprendido en la materia de matemáticas para ciencia de datos (probabilidad y estadística) en el lenguaje R.
+
+##### Problema 1: distribución binomial.
+
+Un equipo de desarrollo con un sistema de integración continua está experimentando fallas esporádicas en sus pruebas unitarias. Se sabe que hay una condición de carrera que aunque difícil de detectar, ocurre con una probabilidad de 7.5% en cada corrida.
+
+1) Con qué probabilidad fallará 3 veces seguidas cuando Luis quiera subir sus cambios al repositorio, después de intentar subir 3 cambios?
+
+    P(x = 3) si n = 3 y p = 0.075
+
+2) Con qué probabilidad fallará entre 1 y 5 veces seguidas cuando Luis quiera subir sus cambios al repositorio, después de intentar subir 20 cambios?
+
+    P(1 <= x <= 5) si n = 20 y p = 0.075
+
+3) Con qué probabilidad no fallará ninguna vez, si en promedio, Luis ejecuta 10 construcciones en el contenedor integración continua en cada ciclo de desarrollo diario?
+
+4) Simula como se vería para desarrollador en un equipo de 20 personas de manera aleatoria si cada uno ejecuta 10 construcciones sobre integración continua por día, cuantas fallas podríamos observar?
+```{r}
+    # 1)
+    dbinom(3, 3, 0.075)
+    # 2)
+    dbinom(1:5, 20, 0.075)
+    pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
+    # 3)
+    1 - dbinom(0, 10, 0.075)
+    qbinom(0, 10, 0.075)
+    # 4)
+    eventCount <- 0
+    # 20 desarrolladores
+    for(i in 1:20) {
+      # Genera aleatoriamente 1 solo resultado de 10 ejecuciones de dicho desarrollador
+        for(j in rbinom(1, 10, 0.075)) {
+          eventCount <- eventCount + j
+        }
+    }
+    print(eventCount)
+    # de una forma más simple, lo de arriba puede expresado de la siguiente manera:
+    # genera resultados aleatorios para 20 (n) desarrolladores que ejecutan 10 (size) construcciones
+    eventCount <- 0
+    for(i in rbinom(20, 10, 0.075)) {
+      eventCount <- eventCount + i
+    }
+    print(eventCount)
+    # Ambos casos deben ser similares.
+```
+
+Cabe destacar, que bajo la percepción de Luis, la probabilidad de fallo se aproxima a 1.0 cuando el equipo requiere de sus cambios con urgencia.
