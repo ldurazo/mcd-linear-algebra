@@ -30,7 +30,6 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
     pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
     # 3)
     1 - dbinom(0, 10, 0.075)
-    qbinom(0, 10, 0.075)
     # 4)
     eventCount <- 0
     # 20 desarrolladores
