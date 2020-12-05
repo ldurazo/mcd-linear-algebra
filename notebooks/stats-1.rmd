@@ -80,17 +80,22 @@ for (i in rbinom_result) {
   pp <- append(pp, p)
 }
 
-barplot(rpoisbinom(20, pp))
+plot(rpoisbinom(20, pp))
 ```
 Lo anterior generado es uan distribución de desviaciones utilizando rpoisbinom, pero las muestras son muy pocas, incrementos los valores para observarlo de nuevo. Pongamos a 50 desarrolladores, a ejecutar 100 despliegues a integración continua por día.
 
 ```{r}
 rbinom_result <- rbinom(50, 100, 0.075)
+barplot(rbinom_result)
 probabilities <- vector()
 for (i in rbinom_result) {
   p <- i / 100
   probabilities <- append(probabilities, p)
 }
 
-barplot(rpoisbinom(100, probabilities))
+barplot(ppoisbinom(1:5, probabilities))
+plot(rpoisbinom(50, probabilities))
+
+barplot(pbinom(1:5, 50, 0.075))
 ```
+Lo anterior muestra la cumulativa para ambos casos de sumar un distinto número de eventos aleatorios (varias binomiales) versus la cumulativa para el cálculo tradicional de la distribución binomial.
