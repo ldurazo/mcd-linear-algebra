@@ -1,6 +1,6 @@
 ---
 title: "Probabilidad y estadística con R"
-author: ldurazo
+author: Luis Alberto Durazo Arvizu
 date: 28/11/20
 output: pdf_document
 ---
