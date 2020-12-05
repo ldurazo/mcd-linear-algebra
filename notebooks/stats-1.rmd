@@ -5,17 +5,9 @@ date: 28/11/20
 output: pdf_document
 ---
 
-```{r}
-# Libraries.
-chooseCRANmirror(ind = 52)
-install.packages(c("poisbinom", "purrr"))
-library(poisbinom)
-library(purrr)
-```
-
 Esta libreta de R contiene una serie de ejercicios con el fin de practicar lo aprendido en la materia de matemáticas para ciencia de datos (probabilidad y estadística) en el lenguaje R.
 
-##### Problema 1: distribución binomial.
+##### Ejercicio con distribución binomial.
 
 Un equipo de desarrollo con un sistema de integración continua está experimentando fallas esporádicas en sus pruebas unitarias. Se sabe que hay una condición de carrera que aunque difícil de detectar, ocurre con una probabilidad de 7.5% en cada corrida.
 
@@ -24,78 +16,52 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
     P(x = 3) si n = 3 y p = 0.075
 
 ```{r}
-    # 1)
-    dbinom(3, 3, 0.075)
+# 1)
+dbinom(3, 3, 0.075)
 ```
 2) Con qué probabilidad fallará entre 1 y 5 veces seguidas cuando Luis quiera subir sus cambios al repositorio, después de intentar subir 20 cambios?
 
     P(1 <= x <= 5) si n = 20 y p = 0.075
 ```{r}
-    # 2)
-    dbinom(1:5, 20, 0.075)
-    plot(dbinom(1:5, 20, 0.075))
-    pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
+# 2)
+dbinom(1:5, 20, 0.075)
+plot(dbinom(1:5, 20, 0.075))
+pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
 ```
 
 3) Con qué probabilidad no fallará ninguna vez, si en promedio, Luis ejecuta 10 construcciones en el contenedor integración continua en cada ciclo de desarrollo diario?
 
 ```{r}
-    # 3)
-    1 - dbinom(0, 10, 0.075)
+# 3)
+1 - dbinom(0, 10, 0.075)
 ```
 
 4) Simula como se vería para desarrollador en un equipo de 20 personas de manera aleatoria si cada uno ejecuta 10 construcciones sobre integración continua por día, cuantas fallas podríamos observar?
 
-```{r}
-    # 4)
-    eventCount <- 0
-    # 20 desarrolladores
-    for(i in 1:20) {
-      # Genera aleatoriamente 1 solo resultado de 10 ejecuciones de dicho desarrollador
-        for(j in rbinom(1, 10, 0.075)) {
-          eventCount <- eventCount + j
-        }
-    }
-    print(eventCount)
-```
-    de una forma más simple, lo de arriba puede expresado de la siguiente manera:
-    genera resultados aleatorios para 20 (n) desarrolladores que ejecutan 10 (size) construcciones
-```{r}
-    eventCount <- 0
-    rbinom_result <- rbinom(20, 10, 0.075)
-    plot(rbinom_result)
-    for(i in rbinom_result) {
-      eventCount <- eventCount + i
-    }
-    print(eventCount)
-```
-    Ambos resultados deben ser similares.
-
-    Sin embargo, esta no es la forma de sumar dos distribuciones binomiales, para hacer eso necesitaríamos hacer una distribución binomial de poisson, para tener una distribución de poisson de los resultados de las simulaciones con eventos con la misma probabilidad.
+Si queremos ver un único ejercicio de simulación, veamos el siguiente resultado:
 
 ```{r}
-pp <- vector()
-for (i in rbinom_result) {
-  p <- i / 10
-  pp <- append(pp, p)
+plot(rbinom(20, 10, 0.075))
+```
+Sin embargo, esto representa una única simulación. Veamos que pasa si ejecutamos la simulación 500 veces, obtendremos un histograma del total de fallas por simulación.
+
+nuestras m1, m2, ...m500 todas son iguales a 20. Nuestra K = 200. y la probabilidad persiste en 0.075.
+
+```{r}
+histogram <- vector()
+totalCount <- 0
+for (i in 1:500) {
+  eventCount <- 0
+  rbinom_result <- rbinom(20, 10, 0.075)
+  for (j in rbinom_result) {
+    eventCount <- eventCount + j
+  }
+  histogram <- append(histogram, eventCount)
+  totalCount <- totalCount + eventCount
 }
-
-plot(rpoisbinom(20, pp))
+plot(histogram)
 ```
-Lo anterior generado es uan distribución de desviaciones utilizando rpoisbinom, pero las muestras son muy pocas, incrementos los valores para observarlo de nuevo. Pongamos a 50 desarrolladores, a ejecutar 100 despliegues a integración continua por día.
-
+Para un total en esta ejecución de:
 ```{r}
-rbinom_result <- rbinom(50, 100, 0.075)
-barplot(rbinom_result)
-probabilities <- vector()
-for (i in rbinom_result) {
-  p <- i / 100
-  probabilities <- append(probabilities, p)
-}
-
-barplot(ppoisbinom(1:5, probabilities))
-plot(rpoisbinom(50, probabilities))
-
-barplot(pbinom(1:5, 50, 0.075))
-```
-Lo anterior muestra la cumulativa para ambos casos de sumar un distinto número de eventos aleatorios (varias binomiales) versus la cumulativa para el cálculo tradicional de la distribución binomial.
+print(totalCount)
+print(totalCount / 500)
