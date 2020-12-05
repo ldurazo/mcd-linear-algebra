@@ -2,8 +2,16 @@
 title: "Probabilidad y estadística con R"
 author: ldurazo
 date: 28/11/20
-output: html_notebook
+output: pdf_document
 ---
+
+```{r}
+# Libraries.
+chooseCRANmirror(ind = 52)
+install.packages(c("poisbinom", "purrr"))
+library(poisbinom)
+library(purrr)
+```
 
 Esta libreta de R contiene una serie de ejercicios con el fin de practicar lo aprendido en la materia de matemáticas para ciencia de datos (probabilidad y estadística) en el lenguaje R.
 
@@ -15,22 +23,30 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
 
     P(x = 3) si n = 3 y p = 0.075
 
-2) Con qué probabilidad fallará entre 1 y 5 veces seguidas cuando Luis quiera subir sus cambios al repositorio, después de intentar subir 20 cambios?
-
-    P(1 <= x <= 5) si n = 20 y p = 0.075
-
-3) Con qué probabilidad no fallará ninguna vez, si en promedio, Luis ejecuta 10 construcciones en el contenedor integración continua en cada ciclo de desarrollo diario?
-
-4) Simula como se vería para desarrollador en un equipo de 20 personas de manera aleatoria si cada uno ejecuta 10 construcciones sobre integración continua por día, cuantas fallas podríamos observar?
 ```{r}
     # 1)
     dbinom(3, 3, 0.075)
+```
+2) Con qué probabilidad fallará entre 1 y 5 veces seguidas cuando Luis quiera subir sus cambios al repositorio, después de intentar subir 20 cambios?
+
+    P(1 <= x <= 5) si n = 20 y p = 0.075
+```{r}
     # 2)
     dbinom(1:5, 20, 0.075)
     plot(dbinom(1:5, 20, 0.075))
     pbinom(0, 20, 0.075, lower.tail = FALSE) - pbinom(4, 20, 0.075, lower.tail = FALSE)
+```
+
+3) Con qué probabilidad no fallará ninguna vez, si en promedio, Luis ejecuta 10 construcciones en el contenedor integración continua en cada ciclo de desarrollo diario?
+
+```{r}
     # 3)
     1 - dbinom(0, 10, 0.075)
+```
+
+4) Simula como se vería para desarrollador en un equipo de 20 personas de manera aleatoria si cada uno ejecuta 10 construcciones sobre integración continua por día, cuantas fallas podríamos observar?
+
+```{r}
     # 4)
     eventCount <- 0
     # 20 desarrolladores
@@ -41,8 +57,10 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
         }
     }
     print(eventCount)
-    # de una forma más simple, lo de arriba puede expresado de la siguiente manera:
-    # genera resultados aleatorios para 20 (n) desarrolladores que ejecutan 10 (size) construcciones
+```
+    de una forma más simple, lo de arriba puede expresado de la siguiente manera:
+    genera resultados aleatorios para 20 (n) desarrolladores que ejecutan 10 (size) construcciones
+```{r}
     eventCount <- 0
     rbinom_result <- rbinom(20, 10, 0.075)
     plot(rbinom_result)
@@ -50,7 +68,29 @@ Un equipo de desarrollo con un sistema de integración continua está experiment
       eventCount <- eventCount + i
     }
     print(eventCount)
-    # Ambos casos deben ser similares.
 ```
+    Ambos resultados deben ser similares.
 
-Cabe destacar, que bajo la percepción de Luis, la probabilidad de fallo se aproxima a 1.0 cuando el equipo requiere de sus cambios con urgencia.
+    Sin embargo, esta no es la forma de sumar dos distribuciones binomiales, para hacer eso necesitaríamos hacer una distribución binomial de poisson, para tener una distribución de poisson de los resultados de las simulaciones con eventos con la misma probabilidad.
+
+```{r}
+pp <- vector()
+for (i in rbinom_result) {
+  p <- i / 10
+  pp <- append(pp, p)
+}
+
+barplot(rpoisbinom(20, pp))
+```
+Lo anterior generado es uan distribución de desviaciones utilizando rpoisbinom, pero las muestras son muy pocas, incrementos los valores para observarlo de nuevo. Pongamos a 50 desarrolladores, a ejecutar 100 despliegues a integración continua por día.
+
+```{r}
+rbinom_result <- rbinom(50, 100, 0.075)
+probabilities <- vector()
+for (i in rbinom_result) {
+  p <- i / 100
+  probabilities <- append(probabilities, p)
+}
+
+barplot(rpoisbinom(100, probabilities))
+```
